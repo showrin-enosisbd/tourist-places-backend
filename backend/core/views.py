@@ -38,3 +38,18 @@ def place_list(request, format=None):
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as err:
             return Response(err.__str__(), status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticatedOrReadOnly])
+def place_detail(request, pk, format=None):
+    print(pk)
+    try:
+        place = Place.objects.get(pk=pk)
+    except Exception as err:
+        return Response(err.__str__(), status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = PlaceSerializer(place)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
