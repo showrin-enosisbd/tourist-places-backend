@@ -68,3 +68,12 @@ def place_detail(request, pk, format=None):
 
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        place.delete()
+
+        response = {
+            'message': 'The place has been deleted successfully',
+        }
+
+        return Response(response, status=status.HTTP_204_NO_CONTENT)
