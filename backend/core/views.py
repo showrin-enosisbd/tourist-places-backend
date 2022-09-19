@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
+from core.models import Place
 from core.serializers import PlaceSerializer
 
 
@@ -32,3 +33,11 @@ def create_place(request, format=None):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except Exception as err:
         return Response(err.__str__(), status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def place_list(request, format=None):
+    places = Place.objects.all()
+    serializer = PlaceSerializer(places, many=True)
+
+    return Response(serializer.data, status=status.HTTP_200_OK)
