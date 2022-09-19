@@ -12,6 +12,7 @@ class PlaceSerializer(serializers.Serializer):
     rating = serializers.IntegerField()
     type = serializers.CharField()
     picture = serializers.CharField()
+    creator = serializers.ReadOnlyField(source='creator.id')
 
     def create(self, validated_data):
         new_place = Place.objects.create(**validated_data)

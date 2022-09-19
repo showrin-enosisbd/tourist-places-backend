@@ -21,6 +21,8 @@ def place_list(request, format=None):
 
             if serializer.is_valid():
                 new_place = serializer.save()
+                new_place.creator = request.user
+                new_place.save()
 
                 response = {
                     'message': 'The place has been created successfully',
@@ -31,6 +33,7 @@ def place_list(request, format=None):
                         'rating': new_place.rating,
                         'type': new_place.type,
                         'picture': new_place.picture,
+                        'creator': new_place.creator.id,
                     }
                 }
                 return Response(response, status=status.HTTP_201_CREATED)
