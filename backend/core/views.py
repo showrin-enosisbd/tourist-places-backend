@@ -53,3 +53,18 @@ def place_detail(request, pk, format=None):
         serializer = PlaceSerializer(place)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    elif request.method == 'PUT':
+        serializer = PlaceSerializer(place, data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+
+            response = {
+                'message': 'The place has been updated successfully',
+            }
+
+            return Response(response, status=status.HTTP_200_OK)
+
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -17,3 +17,14 @@ class PlaceSerializer(serializers.Serializer):
         new_place = Place.objects.create(**validated_data)
 
         return new_place
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.address = validated_data.get('address', instance.address)
+        instance.rating = validated_data.get('rating', instance.rating)
+        instance.type = validated_data.get('type', instance.type)
+        instance.picture = validated_data.get('picture', instance.picture)
+
+        instance.save()
+
+        return instance

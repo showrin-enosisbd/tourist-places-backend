@@ -5,7 +5,7 @@ from core.views import place_list, place_detail
 
 urlpatterns = [
     url(r'^places/$', place_list, name='place-list'),
-    url(r'^places/(?P<pk>\d+)/', place_detail, name='place-detail'),
+    url(r'^places/(?P<pk>\d+)/$', place_detail, name='place-detail'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
