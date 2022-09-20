@@ -2,6 +2,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.exceptions import PermissionDenied
+from django.shortcuts import get_object_or_404
+from core.permissions import has_permission_for_item
 
 from core.models import Place
 from core.serializers import PlaceSerializer
@@ -46,37 +49,37 @@ def place_list(request, format=None):
 @api_view(['GET', 'PUT', 'DELETE'])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def place_detail(request, pk, format=None):
-    print(pk)
-    try:
-        place = Place.objects.get(pk=pk)
-    except Exception as err:
-        return Response(err.__str__(), status=status.HTTP_404_NOT_FOUND)
+    place = get_object_or_404(Place, pk=pk)
 
-    if request.method == 'GET':
-        serializer = PlaceSerializer(place)
+    if not has_permission_for_item(request, place):
+        raise PermissionDenied
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+    else:
+        if request.method == 'GET':
+            serializer = PlaceSerializer(place)
 
-    elif request.method == 'PUT':
-        serializer = PlaceSerializer(place, data=request.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-        if serializer.is_valid():
-            serializer.save()
+        elif request.method == 'PUT':
+            serializer = PlaceSerializer(place, data=request.data)
+
+            if serializer.is_valid():
+                serializer.save()
+
+                response = {
+                    'message': 'The place has been updated successfully',
+                }
+
+                return Response(response, status=status.HTTP_200_OK)
+
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        elif request.method == 'DELETE':
+            place.delete()
 
             response = {
-                'message': 'The place has been updated successfully',
+                'message': 'The place has been deleted successfully',
             }
 
-            return Response(response, status=status.HTTP_200_OK)
-
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    elif request.method == 'DELETE':
-        place.delete()
-
-        response = {
-            'message': 'The place has been deleted successfully',
-        }
-
-        return Response(response, status=status.HTTP_204_NO_CONTENT)
+            return Response(response, status=status.HTTP_204_NO_CONTENT)
