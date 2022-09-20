@@ -4,10 +4,11 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
-from core.permissions import has_permission_for_item
 
 from core.models import Place
 from core.serializers import PlaceSerializer
+from core.permissions import has_permission_for_item
+from helpers.pagination import get_paginted_result
 
 
 @api_view(['GET', 'POST'])
@@ -15,8 +16,10 @@ from core.serializers import PlaceSerializer
 def place_list(request, format=None):
     if request.method == 'GET':
         places = Place.objects.all()
-        serializer = PlaceSerializer(places, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        PAGE_SIZE = 10
+
+        return get_paginted_result(queryset=places, request=request,
+                                   page_size=PAGE_SIZE, serializer=PlaceSerializer)
 
     elif request.method == 'POST':
         try:

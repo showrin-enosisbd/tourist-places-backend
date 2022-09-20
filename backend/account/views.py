@@ -7,6 +7,7 @@ from django.contrib.auth import logout
 
 from account.serializers import UserSerializer
 from account.models import User
+from helpers.pagination import get_paginted_result
 
 
 @api_view(['POST'])
@@ -49,6 +50,7 @@ def logout_user(request):
 def user_list(request, format=None):
     if request.method == 'GET':
         users = User.objects.all()
-        serializer = UserSerializer(users, many=True)
+        PAGE_SIZE = 10
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return get_paginted_result(queryset=users, request=request,
+                                   page_size=PAGE_SIZE, serializer=UserSerializer)
