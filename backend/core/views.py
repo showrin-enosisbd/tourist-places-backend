@@ -9,6 +9,10 @@ from core.models import Place
 from core.serializers import PlaceSerializer
 from core.permissions import has_permission_for_item
 from helpers.pagination import get_paginted_result
+from core.sorting import get_sorted_data
+
+SORT_DIRECTION_KEY = 'sort'
+SORT_BY_KEY = 'sort'
 
 
 @api_view(['GET', 'POST'])
@@ -16,7 +20,8 @@ from helpers.pagination import get_paginted_result
 def place_list(request, format=None):
     if request.method == 'GET':
         places = Place.objects.all()
-        PAGE_SIZE = 10
+        places = get_sorted_data(queryset=places, request=request)
+        PAGE_SIZE = 20
 
         return get_paginted_result(queryset=places, request=request,
                                    page_size=PAGE_SIZE, serializer=PlaceSerializer)
