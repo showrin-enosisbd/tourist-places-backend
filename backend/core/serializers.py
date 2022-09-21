@@ -9,7 +9,7 @@ class PlaceSerializer(serializers.Serializer):
     updated_at = serializers.DateTimeField(required=False)
     name = serializers.CharField()
     address = serializers.CharField()
-    rating = serializers.IntegerField()
+    rating = serializers.IntegerField(min_value=1, max_value=5)
     type = serializers.CharField()
     picture = serializers.CharField()
     creator = serializers.ReadOnlyField(source='creator.id')
