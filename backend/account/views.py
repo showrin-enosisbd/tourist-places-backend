@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.db import IntegrityError
 from django.contrib.auth import logout
+from django.shortcuts import get_object_or_404
 
 from account.serializers import UserSerializer
 from account.models import User
@@ -41,6 +42,7 @@ def register_user(request, format=None):
 
             response = {
                 'message': 'User registered successfully',
+                'id': account.id,
                 'username': account.username,
                 'email': account.email,
                 'token': token.key,
@@ -71,3 +73,12 @@ def user_list(request, format=None):
 
         return get_paginted_result(queryset=users, request=request,
                                    page_size=PAGE_SIZE, serializer=UserSerializer)
+
+
+@api_view(['GET'])
+def who_am_i(request, format=None):
+    if request.method == 'GET':
+        user = get_object_or_404(User, email=request.user)
+        serilizer = UserSerializer(user)
+
+        return Response(serilizer.data, status=status.HTTP_200_OK)
