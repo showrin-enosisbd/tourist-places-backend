@@ -1,5 +1,21 @@
-from urllib import request
+import math
+from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
+
+
+class CustomPagination(PageNumberPagination):
+    def get_paginated_response(self, data):
+        item_count_per_page = self.page_size
+        total_items = self.page.paginator.count
+
+        print(item_count_per_page)
+        print(total_items)
+
+        return Response({
+            'total_pages': math.ceil(total_items/item_count_per_page),
+            'count': self.page.paginator.count,
+            'results': data
+        })
 
 
 def get_paginted_result(**kwargs):
@@ -8,7 +24,7 @@ def get_paginted_result(**kwargs):
     page_size = kwargs['page_size']
     Seriazer_Clase = kwargs['serializer']
 
-    paginator = PageNumberPagination()
+    paginator = CustomPagination()
     paginator.page_size = page_size
     result_page = paginator.paginate_queryset(queryset, request)
     serializer = Seriazer_Clase(result_page, many=True)

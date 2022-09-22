@@ -12,7 +12,7 @@ from helpers.pagination import get_paginted_result
 from core.sorting import get_sorted_data
 from core.filters import search_text_filter
 
-PAGE_SIZE = 20
+PAGE_SIZE = 10
 
 
 @api_view(['GET', 'POST'])
