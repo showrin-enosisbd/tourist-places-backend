@@ -8,9 +8,6 @@ class CustomPagination(PageNumberPagination):
         item_count_per_page = self.page_size
         total_items = self.page.paginator.count
 
-        print(item_count_per_page)
-        print(total_items)
-
         return Response({
             'total_pages': math.ceil(total_items/item_count_per_page),
             'count': self.page.paginator.count,
