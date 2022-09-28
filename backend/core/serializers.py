@@ -1,7 +1,5 @@
 from rest_framework import serializers
 
-from core.models import Place
-
 
 class PlaceSerializer(serializers.Serializer):
     id = serializers.IntegerField(required=False)
@@ -12,20 +10,20 @@ class PlaceSerializer(serializers.Serializer):
     rating = serializers.IntegerField(min_value=1, max_value=5)
     type = serializers.CharField()
     picture = serializers.CharField()
-    creator = serializers.ReadOnlyField(source='creator.id')
+    creator_id = serializers.ReadOnlyField(source='creator.id')
 
-    def create(self, validated_data):
-        new_place = Place.objects.create(**validated_data)
+    # def create(self, validated_data):
+    #     new_place = Place.objects.create(**validated_data)
 
-        return new_place
+    #     return new_place
 
-    def update(self, instance, validated_data):
-        instance.name = validated_data.get('name', instance.name)
-        instance.address = validated_data.get('address', instance.address)
-        instance.rating = validated_data.get('rating', instance.rating)
-        instance.type = validated_data.get('type', instance.type)
-        instance.picture = validated_data.get('picture', instance.picture)
+    # def update(self, instance, validated_data):
+    #     instance.name = validated_data.get('name', instance.name)
+    #     instance.address = validated_data.get('address', instance.address)
+    #     instance.rating = validated_data.get('rating', instance.rating)
+    #     instance.type = validated_data.get('type', instance.type)
+    #     instance.picture = validated_data.get('picture', instance.picture)
 
-        instance.save()
+    #     instance.save()
 
-        return instance
+    #     return instance

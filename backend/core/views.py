@@ -5,25 +5,31 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 
+from sqlalchemy import MetaData
+from sqlalchemy.orm import scoped_session
+from sqlalchemy.ext.serializer import loads, dumps, Serializer
 from core.models import Place
 from core.serializers import PlaceSerializer
 from core.permissions import has_permission_for_item
 from helpers.pagination import get_paginted_result
 from core.sorting import get_sorted_data
 from core.filters import search_text_filter
+from backend.session import sa_session
 
-PAGE_SIZE = 10
+
+PAGE_SIZE = 3
 
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def place_list(request, format=None):
     if request.method == 'GET':
-        places = Place.objects.all()
+        places = sa_session.query(Place)
         places = get_sorted_data(queryset=places, request=request)
-        places = search_text_filter(queryset=places, request=request)
+        places = search_text_filter(
+            model=Place, queryset=places, request=request)
 
-        return get_paginted_result(queryset=places, request=request,
+        return get_paginted_result(queryset=places.all(), request=request,
                                    page_size=PAGE_SIZE, serializer=PlaceSerializer)
 
     elif request.method == 'POST':

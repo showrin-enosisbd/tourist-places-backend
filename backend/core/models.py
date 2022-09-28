@@ -1,20 +1,25 @@
-from django.db import models
-from django.core.validators import MaxValueValidator, MinValueValidator
+from django.utils import timezone
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, DateTime, String, Integer, TEXT, ForeignKey
+from sqlalchemy.orm import relationship
 
+from backend.session import Base
 from account.models import User
 
 
-class Place(models.Model):
-    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
-    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
-    name = models.CharField(max_length=100)
-    address = models.CharField(max_length=255)
-    rating = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(1), MaxValueValidator(5)])
-    type = models.CharField(max_length=50)
-    picture = models.TextField()
-    creator = models.ForeignKey(
-        User, related_name='places', on_delete=models.CASCADE, null=True, blank=True, default=0)
+class Place(Base):
+    __tablename__ = 'places'
 
-    class Meta:
-        ordering = ['created_at']
+    id = Column(Integer, primary_key=True)
+    created_at = Column(DateTime,
+                        default=timezone.now(), nullable=True)
+    updated_at = Column(DateTime, onupdate=timezone.now())
+    name = Column(String(100))
+    address = Column(String(255))
+    rating = Column(Integer)
+    type = Column(String(50))
+    picture = Column(TEXT)
+    creator_id = Column(Integer, ForeignKey(
+        User.id, ondelete="CASCADE"), nullable=False)
+
+    creator = relationship('User')
