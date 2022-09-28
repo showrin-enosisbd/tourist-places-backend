@@ -19,11 +19,11 @@ def get_paginted_result(**kwargs):
     queryset = kwargs['queryset']
     request = kwargs['request']
     page_size = kwargs['page_size']
-    Seriazer_Clase = kwargs['serializer']
+    Serializer_Class = kwargs['serializer']
 
     paginator = CustomPagination()
     paginator.page_size = page_size
     result_page = paginator.paginate_queryset(queryset, request)
-    serializer = Seriazer_Clase(result_page, many=True)
+    serializer = Serializer_Class(result_page, many=True)
 
     return paginator.get_paginated_response(serializer.data)

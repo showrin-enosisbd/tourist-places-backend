@@ -1,3 +1,5 @@
+from sqlalchemy import desc
+
 SORT_DIRECTION_KEY = 'sort_direction'
 SORT_BY_KEY = 'sort_by'
 SORT_DIRECTION_ASC = 'asc'
@@ -15,8 +17,7 @@ def get_sorted_data(**kwargs):
         if direction == SORT_DIRECTION_ASC:
             queryset = queryset.order_by(sort_field)
         elif direction == SORT_DIRECTION_DESC:
-            sort_field = '-' + sort_field
-            queryset = queryset.order_by(sort_field)
+            queryset = queryset.order_by(desc(sort_field))
         else:
             queryset = queryset
 
